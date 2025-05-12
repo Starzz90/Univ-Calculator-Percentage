@@ -32,7 +32,7 @@ function calculateProfileScore() {
 
     // Verdict
     let verdict = "";
-    if (totalScore >= actualRate-10) {
+    if (totalScore >= actualRate-5) {
         verdict = `✅ Likely accepted into ${universityName}.`;
     } else if (totalScore >= actualRate - 40) {
         verdict = `🤔 Borderline for ${universityName}.`;

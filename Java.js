@@ -5,10 +5,13 @@ function calculateProfileScore() {
     const regional = parseInt(document.getElementById('regional').value);
     const academics = parseFloat(document.getElementById('academics').value);
     const projects = parseFloat(document.getElementById('projects').value);
+    const gpa = parseFloat(document.getElementById('gpa').value);
+    const ielts = parseFloat(document.getElementById('ielts').value);
 
     const weightOlympiads = parseFloat(document.getElementById('weightOlympiads').value);
     const weightAcademics = parseFloat(document.getElementById('weightAcademics').value);
     const weightProjects = parseFloat(document.getElementById('weightProjects').value);
+    const weightIELTS = parseFloat(document.getElementById('weightIELTS').value);
 
     const universityName = document.getElementById('universityName').value;
     const acceptanceRate = parseFloat(document.getElementById('acceptanceRate').value);

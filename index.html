@@ -107,7 +107,18 @@
         <label>National: <input type="number" id="national" min="0" max="10" required></label>
         <label>Regional: <input type="number" id="regional" min="0" max="10" required></label>
     </fieldset>
+    <fieldset>
+        <h2>🎓 University Scholarship Calculator</h2>
 
+          <label for="gpa">GPA (out of 4.0):</label>
+          <input type="number" id="gpa" step="0.01">
+        
+          <label for="ielts">IELTS Score:</label>
+          <input type="number" id="ielts" step="0.5">
+        
+          <label for="awards">Number of Achievements/Awards:</label>
+          <input type="number" id="awards">
+    </fieldset>
     <fieldset>
         <legend>📚 Academic & Project Scores (0–100)</legend>
         <label>Academic Score: <input type="number" id="academics" min="0" max="100" required></label>
@@ -129,6 +140,8 @@
 
     <br>
     <button type="button" onclick="calculateProfileScore()">Calculate Score</button>
+    <button onclick="checkEligibility()">Check Eligibility</button>
+
 </form>
 
 <hr>

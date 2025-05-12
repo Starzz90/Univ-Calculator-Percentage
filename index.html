@@ -96,32 +96,33 @@
     
 </head>
 <body>
-    <h1>🎓 University Admission Profile Score Calculator</h1>
+
+<h1>🎓 University Admission Profile Score Calculator</h1>
 
 <form id="calculatorForm">
     <fieldset>
         <legend>🏅 Olympiad Achievements (0–10 Awards)</legend>
-        <label>International: <input type="number" id="international" min="0" max="10" required></label><br>
-        <label>National: <input type="number" id="national" min="0" max="10" required></label><br>
+        <label>International: <input type="number" id="international" min="0" max="10" required></label>
+        <label>National: <input type="number" id="national" min="0" max="10" required></label>
         <label>Regional: <input type="number" id="regional" min="0" max="10" required></label>
     </fieldset>
 
     <fieldset>
         <legend>📚 Academic & Project Scores (0–100)</legend>
-        <label>Academic Score: <input type="number" id="academics" min="0" max="100" required></label><br>
+        <label>Academic Score: <input type="number" id="academics" min="0" max="100" required></label>
         <label>Project Score: <input type="number" id="projects" min="0" max="100" required></label>
     </fieldset>
 
     <fieldset>
         <legend>⚖️ Weights (Total = 100%)</legend>
-        <label>Olympiad Weight: <input type="number" id="weightOlympiads" min="0" max="100" required></label><br>
-        <label>Academics Weight: <input type="number" id="weightAcademics" min="0" max="100" required></label><br>
+        <label>Olympiad Weight: <input type="number" id="weightOlympiads" min="0" max="100" required></label>
+        <label>Academics Weight: <input type="number" id="weightAcademics" min="0" max="100" required></label>
         <label>Projects Weight: <input type="number" id="weightProjects" min="0" max="100" required></label>
     </fieldset>
 
     <fieldset>
         <legend>🏛️ University Info</legend>
-        <label>University Name: <input type="text" id="universityName" required></label><br>
+        <label>University Name: <input type="text" id="universityName" required></label>
         <label>Acceptance Rate (%): <input type="number" id="acceptanceRate" min="0" max="100" required></label>
     </fieldset>
 
@@ -133,5 +134,6 @@
 
 <div id="results"></div>
 
+<script src="calculator.js"></script>
 </body>
 </html>

@@ -5,6 +5,9 @@ function calculateProfileScore() {
     const regional = parseInt(document.getElementById('regional').value);
     const academics = parseFloat(document.getElementById('academics').value);
     const projects = parseFloat(document.getElementById('projects').value);
+    const GPA = parseFloat(document.getElementById('GPA').value);
+    const IELTS = parseFloat(document.getElementById('IELTS').value);
+    const awards = parseFloat(document.getElementById('awards').value);
 
     const weightOlympiads = parseFloat(document.getElementById('weightOlympiads').value);
     const weightAcademics = parseFloat(document.getElementById('weightAcademics').value);
@@ -29,18 +32,6 @@ function calculateProfileScore() {
     ).toFixed(2);
 
     const actualRate = 100 - acceptanceRate;
-
-    function checkEligibility() {
-      const gpa = parseFloat(document.getElementById("gpa").value);
-      const ielts = parseFloat(document.getElementById("ielts").value);
-      const awards = parseInt(document.getElementById("awards").value);
-      const result = document.getElementById("result");
-
-      if (isNaN(gpa) || isNaN(ielts) || isNaN(awards)) {
-        result.innerText = "❗ Please fill out all fields.";
-        result.style.color = "red";
-        return;
-      }
 
       if (gpa >= 3.7 && ielts >= 7.5 && awards >= 3) {
         result.innerText = "✅ Eligible for Admission and Scholarship!";

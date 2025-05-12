@@ -30,6 +30,29 @@ function calculateProfileScore() {
 
     const actualRate = 100 - acceptanceRate;
 
+    function checkEligibility() {
+      const gpa = parseFloat(document.getElementById("gpa").value);
+      const ielts = parseFloat(document.getElementById("ielts").value);
+      const awards = parseInt(document.getElementById("awards").value);
+      const result = document.getElementById("result");
+
+      if (isNaN(gpa) || isNaN(ielts) || isNaN(awards)) {
+        result.innerText = "❗ Please fill out all fields.";
+        result.style.color = "red";
+        return;
+      }
+
+      if (gpa >= 3.7 && ielts >= 7.5 && awards >= 3) {
+        result.innerText = "✅ Eligible for Admission and Scholarship!";
+        result.style.color = "green";
+      } else if (gpa >= 3.5 && ielts >= 6.5) {
+        result.innerText = "⚠️ Eligible for Admission, but not Scholarship.";
+        result.style.color = "orange";
+      } else {
+        result.innerText = "❌ Not eligible yet. Keep improving!";
+        result.style.color = "red";
+      }
+    }
     // Verdict
     let verdict = "";
     if (totalScore >= actualRate-5) {
@@ -60,29 +83,6 @@ function calculateProfileScore() {
         university: universityName,
         acceptanceRate: acceptanceRate
     };
-    function checkEligibility() {
-      const gpa = parseFloat(document.getElementById("gpa").value);
-      const ielts = parseFloat(document.getElementById("ielts").value);
-      const awards = parseInt(document.getElementById("awards").value);
-      const result = document.getElementById("result");
-
-      if (isNaN(gpa) || isNaN(ielts) || isNaN(awards)) {
-        result.innerText = "❗ Please fill out all fields.";
-        result.style.color = "red";
-        return;
-      }
-
-      if (gpa >= 3.7 && ielts >= 7.5 && awards >= 3) {
-        result.innerText = "✅ Eligible for Admission and Scholarship!";
-        result.style.color = "green";
-      } else if (gpa >= 3.5 && ielts >= 6.5) {
-        result.innerText = "⚠️ Eligible for Admission, but not Scholarship.";
-        result.style.color = "orange";
-      } else {
-        result.innerText = "❌ Not eligible yet. Keep improving!";
-        result.style.color = "red";
-      }
-    }
 
     console.log("Stored Profile Data:", profileData);
     // You can send `profileData` to a server or store in localStorage/sessionStorage if needed

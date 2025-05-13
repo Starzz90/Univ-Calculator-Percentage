@@ -72,5 +72,6 @@ function calculateProfileScore() {
     };
 
     console.log("Stored Profile Data:", profileData);
+    console.log(profileData);
     // You can send `profileData` to a server or store in localStorage/sessionStorage if needed
 }

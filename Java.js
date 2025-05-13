@@ -1,82 +1,82 @@
-function calculateProfileScore() {
-    // Collect inputs
-    const international = parseInt(document.getElementById('international').value);
-    const national = parseInt(document.getElementById('national').value);
-    const regional = parseInt(document.getElementById('regional').value);
-    const academics = parseFloat(document.getElementById('academics').value);
-    const projects = parseFloat(document.getElementById('projects').value);
-    const gpa = parseFloat(document.getElementById('gpa').value);
-    const ielts = parseFloat(document.getElementById('ielts').value);
+// JavaScript File: Java.js
 
-    const weightOlympiads = parseFloat(document.getElementById('weightOlympiads').value);
-    const weightAcademics = parseFloat(document.getElementById('weightAcademics').value);
-    const weightProjects = parseFloat(document.getElementById('weightProjects').value);
+function calculateProfileScore() { const intl = parseInt(document.getElementById("international").value) || 0; const nat = parseInt(document.getElementById("national").value) || 0; const reg = parseInt(document.getElementById("regional").value) || 0; const gpa = parseFloat(document.getElementById("gpa").value) || 0; const ielts = parseFloat(document.getElementById("ielts").value) || 0; const awards = parseInt(document.getElementById("awards").value) || 0; const academics = parseFloat(document.getElementById("academics").value); const projects = parseFloat(document.getElementById("projects").value); const weightOly = parseFloat(document.getElementById("weightOlympiads").value); const weightAca = parseFloat(document.getElementById("weightAcademics").value); const weightPro = parseFloat(document.getElementById("weightProjects").value); const uniName = document.getElementById("universityName").value; const acceptanceRate = parseFloat(document.getElementById("acceptanceRate").value); const satMath = parseInt(document.getElementById("satMath").value) || 0; const satWriting = parseInt(document.getElementById("satWriting").value) || 0;
 
-    const universityName = document.getElementById('universityName').value;
-    const acceptanceRate = parseFloat(document.getElementById('acceptanceRate').value);
+const nonEnglish = !gpa && !ielts; // Non-English countries
 
-    // Validate weights
-    const totalWeight = weightOlympiads + weightAcademics + weightProjects;
-    if (totalWeight !== 100) {
-        document.getElementById('results').innerHTML = "<p style='color: red;'>⚠️ The weights must sum to 100.</p>";
-        return;
-    }
+const olympiadScore = Math.min(10, intl * 3 + nat * 2 + reg * 1);
+const totalWeight = weightOly + weightAca + weightPro;
 
-    // Scores
-    const olympiadScore = (((international + national + regional) * 10) / 3).toFixed(2);
-    const totalScore = (
-        olympiadScore * (weightOlympiads / 100) +
-        academics * (weightAcademics / 100) +
-        projects * (weightProjects / 100)
-    ).toFixed(2);
+const normalizedOlympiad = (olympiadScore / 10) * (weightOly / totalWeight) * 100;
+const normalizedAcademics = (academics / 100) * (weightAca / totalWeight) * 100;
+const normalizedProjects = (projects / 100) * (weightPro / totalWeight) * 100;
 
-    const actualRate = 100 - acceptanceRate;
+const profileScore = (normalizedOlympiad + normalizedAcademics + normalizedProjects).toFixed(2);
 
-    // Academic result
-    let academicResult = "";
-    if (gpa >= 3.8 && ielts >= 7.5) {
-        academicResult = "✅ You meet the academic and English requirements.";
-    } else if (gpa >= 3.5 && gpa <= 3.7 && ielts >= 6.0 && ielts <= 7.0) {
-        academicResult = "⚠️ You partially meet the academic and English requirements.";
-    } else {
-        academicResult = "❌ Your GPA or IELTS is below standard requirements.";
-    }
+// Admission likelihood
+let admissionStatus = "";
+let emoji = "";
+if (profileScore >= 85) {
+    admissionStatus = "Highly Likely";
+    emoji = "🚀"; // Rocket
+} else if (profileScore >= 70) {
+    admissionStatus = "Likely";
+    emoji = "👍"; // Thumbs Up
+} else if (profileScore >= 50) {
+    admissionStatus = "Borderline";
+    emoji = "🕵️"; // Detective
+} else {
+    admissionStatus = "Unlikely";
+    emoji = "❌"; // Cross
+}
 
-    // Verdict
-    let verdict = "";
-    let emoji = "";
-    let profileRating = Math.min(100, totalScore);
+// Scholarship Chance Calculation
+let scholarshipChance = 0;
+if (!nonEnglish) {
+    scholarshipChance += Math.min(40, (gpa / 4) * 40); // 40% weight
+    scholarshipChance += Math.min(30, (ielts / 9) * 30); // 30% weight
+}
+scholarshipChance += Math.min(30, (awards / 10) * 30); // 30% awards weight
+if (!nonEnglish && (satMath > 0 || satWriting > 0)) {
+    const satTotal = Math.min(1600, satMath + satWriting);
+    scholarshipChance += (satTotal / 1600) * 10; // bonus boost
+}
+scholarshipChance = scholarshipChance.toFixed(2);
 
-    if (totalScore >= actualRate + 10) {
-        verdict = `🌟 Likely Accepted into ${universityName}`;
-        emoji = "🌟";
-    } else if (totalScore >= actualRate - 10) {
-        verdict = `📈 Borderline Accepted into ${universityName}`;
-        emoji = "📈";
-    } else {
-        verdict = `❌ Unlikely to be Accepted into ${universityName}`;
-        emoji = "❌";
-    }
+let scholarshipStatus = "";
+let scholarshipEmoji = "";
+if (scholarshipChance >= 85) {
+    scholarshipStatus = "Very High";
+    scholarshipEmoji = "🎓"; // Graduation Cap
+} else if (scholarshipChance >= 60) {
+    scholarshipStatus = "Moderate";
+    scholarshipEmoji = "💸"; // Money with wings
+} else if (scholarshipChance >= 40) {
+    scholarshipStatus = "Borderline";
+    scholarshipEmoji = "❓"; // Question Mark
+} else {
+    scholarshipStatus = "Low";
+    scholarshipEmoji = "⚠️"; // Warning
+}
 
-    // Display results
-    document.getElementById('results').innerHTML = `
-        <h3>📊 Profile Analysis Result</h3>
+// Display result
+document.getElementById("results").innerHTML = `
+    <div>
+        <h3>Results for ${uniName}</h3>
         <ul>
-            <li><strong>University:</strong> ${universityName}</li>
-            <li><strong>University Acceptance Rate:</strong> ${acceptanceRate}%</li>
-            <li><strong>Required Score to Pass:</strong> ${actualRate.toFixed(2)}%</li>
-            <li><strong>International Awards:</strong> ${international}</li>
-            <li><strong>National Awards:</strong> ${national}</li>
-            <li><strong>Regional Awards:</strong> ${regional}</li>
-            <li><strong>Olympiad Score:</strong> ${olympiadScore}</li>
+            <li><strong>Olympiad Score:</strong> ${olympiadScore} / 10</li>
             <li><strong>Academic Score:</strong> ${academics}</li>
             <li><strong>Project Score:</strong> ${projects}</li>
-            <li><strong>Total Weighted Score:</strong> ${totalScore}%/100%</li>
-            <li><strong>GPA:</strong> ${gpa}/4.0</li>
-            <li><strong>IELTS:</strong> ${ielts}/10</li>
-            <li><strong>Profile Rating:</strong> ${profileRating}/100</li>
+            <li><strong>Profile Score:</strong> ${profileScore} — <strong>${admissionStatus}</strong> ${emoji}</li>
+            <li><strong>Acceptance Rate:</strong> ${acceptanceRate}%</li>
+            ${!nonEnglish ? `<li><strong>GPA:</strong> ${gpa}</li><li><strong>IELTS:</strong> ${ielts}</li>` : ""}
+            ${satMath ? `<li><strong>SAT Math:</strong> ${satMath}</li>` : ""}
+            ${satWriting ? `<li><strong>SAT Writing:</strong> ${satWriting}</li>` : ""}
+            <li><strong>Awards:</strong> ${awards}</li>
+            <li><strong>Scholarship Chance:</strong> ${scholarshipChance}% — ${scholarshipStatus} ${scholarshipEmoji}</li>
         </ul>
-        <h4>${emoji} Verdict: ${verdict}</h4>
-        <p>${academicResult}</p>
-    `;
+    </div>
+`;
+
 }
+

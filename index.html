@@ -1,144 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>University Acceptance Calculator</title>
-  <script src="Java.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Realistic University Admission Calculator</title>
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f4f6fa;
-      color: #333;
-      padding: 40px;
-      max-width: 800px;
-      margin: auto;
-    }
-
-    h1 {
-      text-align: center;
-      color: #1e3a8a;
-      margin-bottom: 30px;
-    }
-
-    form {
-      background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-      padding: 25px 30px;
-    }
-
-    fieldset {
-      border: none;
-      margin-bottom: 20px;
-    }
-
-    legend {
-      font-weight: bold;
-      font-size: 1.1em;
-      color: #1e40af;
-      margin-bottom: 10px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 10px;
-      font-size: 0.95em;
-    }
-
-    input[type="number"],
-    input[type="text"] {
-      width: 100%;
-      padding: 8px 10px;
-      margin-top: 5px;
-      font-size: 1em;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-sizing: border-box;
-    }
-
-    button {
-      background-color: #1d4ed8;
-      color: white;
-      padding: 10px 20px;
-      font-size: 1em;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      display: block;
-      margin: 10px auto;
-    }
-
-    button:hover {
-      background-color: #2563eb;
-    }
-
-    #results {
-      background: #fff;
-      margin-top: 30px;
-      padding: 20px;
-      border-radius: 10px;
-      border-left: 6px solid #1d4ed8;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-    }
-
-    #results h3 {
-      margin-top: 0;
-      color: #1e3a8a;
-    }
-
-    #results p {
-      margin: 8px 0;
-      font-size: 1em;
-    }
-
-    ul {
-      padding-left: 20px;
-    }
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+    .container { background: white; padding: 20px; border-radius: 8px; max-width: 600px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    h2 { text-align: center; }
+    label { display: block; margin-top: 10px; }
+    input, select { width: 100%; padding: 8px; margin-top: 4px; }
+    button { margin-top: 20px; padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    #results { margin-top: 20px; background: #eef; padding: 15px; border-radius: 5px; }
   </style>
 </head>
 <body>
-  <h1>🎓 University Admission Profile Score Calculator</h1>
-  <h3>*Disclaimer: Admission also depends on interviews, essays, and external tests</h3>
+  <div class="container">
+    <h2>University Admission Estimator</h2>
 
-  <form id="calculatorForm">
-    <fieldset>
-      <legend>🏅 Olympiad Achievements (0–10 Awards)</legend>
-      <label>International: <input type="number" id="international" min="0" max="10"></label>
-      <label>National: <input type="number" id="national" min="0" max="10"></label>
-      <label>Regional: <input type="number" id="regional" min="0" max="10"></label>
-    </fieldset>
+    <label>University Name</label>
+    <input type="text" id="universityName">
 
-    <fieldset>
-      <legend>🎓 Academic Details</legend>
-      <label>GPA (out of 4.0): <input type="number" id="gpa" step="0.01" placeholder="Optional for some countries"></label>
-      <label>IELTS Score: <input type="number" id="ielts" step="0.5" placeholder="Optional for non-English countries"></label>
-      <label>Number of Awards: <input type="number" id="awards"></label>
-    </fieldset>
+    <label>Acceptance Rate (%)</label>
+    <input type="number" id="acceptanceRate" min="0" max="100">
 
-    <fieldset>
-      <legend>📚 Academic & Project Scores (0–100)</legend>
-      <label>Academic Score: <input type="number" id="academics" min="0" max="100" required></label>
-      <label>Project Score (based on major): <input type="number" id="projects" min="0" max="100" required></label>
-    </fieldset>
+    <label>GPA (out of 4.0)</label>
+    <input type="number" id="gpa" min="0" max="4" step="0.01">
 
-    <fieldset>
-      <legend>⚖️ Weights (Total = 100%)</legend>
-      <label>Olympiad Weight: <input type="number" id="weightOlympiads" min="0" max="100" required></label>
-      <label>Academics Weight: <input type="number" id="weightAcademics" min="0" max="100" required></label>
-      <label>Projects Weight: <input type="number" id="weightProjects" min="0" max="100" required></label>
-    </fieldset>
+    <label>IELTS Score (out of 9.0)</label>
+    <input type="number" id="ielts" min="0" max="9" step="0.1">
 
-    <fieldset>
-      <legend>🏛️ University Info</legend>
-      <label>University Name: <input type="text" id="universityName" required></label>
-      <label>Acceptance Rate (%): <input type="number" id="acceptanceRate" min="0" max="100" required></label>
-    </fieldset>
+    <label>Total Awards</label>
+    <input type="number" id="awards" min="0">
 
-    <button type="button" onclick="calculateProfileScore()">Calculate Score</button>
-  </form>
+    <label>Projects Score (out of 100)</label>
+    <input type="number" id="projects" min="0" max="100">
 
-  <div id="results"></div>
+    <label>Olympiad Scores</label>
+    <input type="number" id="international" placeholder="International Wins">
+    <input type="number" id="national" placeholder="National Wins">
+    <input type="number" id="regional" placeholder="Regional Wins">
+
+    <button onclick="calculateAdmission()">Calculate</button>
+
+    <div id="results"></div>
+  </div>
+
+  <script src="calculator.js"></script>
 </body>
 </html>

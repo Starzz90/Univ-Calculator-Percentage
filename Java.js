@@ -1,70 +1,80 @@
-// Updated JavaScript for University Admission and Scholarship Calculator
+function calculateProfileScore() {
+    const international = parseInt(document.getElementById("international").value) || 0;
+    const national = parseInt(document.getElementById("national").value) || 0;
+    const regional = parseInt(document.getElementById("regional").value) || 0;
 
-function calculateProfileScore() { const international = parseInt(document.getElementById("international").value) || 0; const national = parseInt(document.getElementById("national").value) || 0; const regional = parseInt(document.getElementById("regional").value) || 0; const gpa = parseFloat(document.getElementById("gpa").value) || 0; const ielts = parseFloat(document.getElementById("ielts").value) || 0; const awards = parseInt(document.getElementById("awards").value) || 0; const academics = parseFloat(document.getElementById("academics").value) || 0; const projects = parseFloat(document.getElementById("projects").value) || 0; const weightOlympiads = parseFloat(document.getElementById("weightOlympiads").value) || 0; const weightAcademics = parseFloat(document.getElementById("weightAcademics").value) || 0; const weightProjects = parseFloat(document.getElementById("weightProjects").value) || 0; const universityName = document.getElementById("universityName").value; const acceptanceRate = parseFloat(document.getElementById("acceptanceRate").value) || 0; const satMath = parseInt(document.getElementById("satMath")?.value) || 0; const satWriting = parseInt(document.getElementById("satWriting")?.value) || 0;
+    const gpa = parseFloat(document.getElementById("gpa").value) || null;
+    const ielts = parseFloat(document.getElementById("ielts").value) || null;
+    const awards = parseInt(document.getElementById("awards").value) || 0;
 
-const totalOlympiadScore = (international * 3 + national * 2 + regional * 1);
-const maxOlympiadScore = 10 * 3 + 10 * 2 + 10 * 1; // Max = 60
-const olympiadScorePercent = (totalOlympiadScore / maxOlympiadScore) * 100;
+    const satMath = parseInt(document.getElementById("satMath")?.value) || null;
+    const satWriting = parseInt(document.getElementById("satWriting")?.value) || null;
 
-const totalWeight = weightOlympiads + weightAcademics + weightProjects;
-const normalizedOlympiad = (olympiadScorePercent || 0);
-const normalizedAcademic = (academics || 0);
-const normalizedProjects = (projects || 0);
+    const academics = parseInt(document.getElementById("academics").value) || 0;
+    const projects = parseInt(document.getElementById("projects").value) || 0;
 
-const profileScore = (
-    (normalizedOlympiad * weightOlympiads + normalizedAcademic * weightAcademics + normalizedProjects * weightProjects)
-    / totalWeight
-);
+    const weightOlympiads = parseInt(document.getElementById("weightOlympiads").value) || 0;
+    const weightAcademics = parseInt(document.getElementById("weightAcademics").value) || 0;
+    const weightProjects = parseInt(document.getElementById("weightProjects").value) || 0;
 
-// Estimate Admission Likelihood based on Profile and University Acceptance Rate
-let admissionChance = (profileScore / 100) * (acceptanceRate * 1.5);
-admissionChance = Math.min(admissionChance, 95); // Cap at 95%
+    const universityName = document.getElementById("universityName").value;
+    const acceptanceRate = parseFloat(document.getElementById("acceptanceRate").value);
 
-// Profile Rating
-const profileRating = Math.round(profileScore);
+    const totalOlympiad = international * 3 + national * 2 + regional;
+    const normalizedOlympiad = Math.min((totalOlympiad / 30) * 100, 100); // cap at 30 weighted points
 
-// Scholarship Chance based on holistic profile
-let scholarshipChance = 0;
-if (gpa > 3.8) scholarshipChance += 30;
-else if (gpa > 3.5) scholarshipChance += 20;
-else if (gpa > 3.2) scholarshipChance += 10;
+    const academicScore = academics;
+    const projectScore = projects;
 
-if (ielts >= 7.5) scholarshipChance += 20;
-else if (ielts >= 6.5) scholarshipChance += 10;
+    const totalWeight = weightOlympiads + weightAcademics + weightProjects;
 
-if (awards >= 10) scholarshipChance += 30;
-else if (awards >= 5) scholarshipChance += 15;
-else if (awards >= 2) scholarshipChance += 5;
+    const weightedScore = (
+        (normalizedOlympiad * weightOlympiads +
+        academicScore * weightAcademics +
+        projectScore * weightProjects) / totalWeight
+    );
 
-if (profileScore >= 80) scholarshipChance += 20;
-else if (profileScore >= 70) scholarshipChance += 10;
+    let bonus = 0;
 
-scholarshipChance = Math.min(scholarshipChance, admissionChance); // Keep realistic: can't get scholarship without being admitted
+    if (gpa !== null) bonus += Math.min(gpa / 4 * 10, 10);
+    if (ielts !== null) bonus += Math.min(ielts / 9 * 10, 10);
+    if (satMath !== null) bonus += Math.min(satMath / 800 * 5, 5);
+    if (satWriting !== null) bonus += Math.min(satWriting / 800 * 5, 5);
+    bonus += Math.min(awards / 20 * 15, 15); // 20+ awards cap at full bonus
 
-// Emoji Results
-const getStatusEmoji = (percent) => {
-    if (percent >= 80) return "🟢 Likely";
-    if (percent >= 60) return "🟡 Borderline";
-    return "🔴 Unlikely";
-};
+    const profileRating = Math.min(weightedScore + bonus, 100);
 
-const results = `
-    <h3>Results for ${universityName}</h3>
-    <p><strong>Profile Rating:</strong> ${profileRating} / 100</p>
-    <p><strong>Olympiad Score:</strong> ${totalOlympiadScore} / 60</p>
-    <p><strong>Academic Score:</strong> ${academics} / 100</p>
-    <p><strong>Project Score:</strong> ${projects} / 100</p>
-    <p><strong>GPA:</strong> ${gpa} / 4.0</p>
-    <p><strong>IELTS:</strong> ${ielts} / 9.0</p>
-    <p><strong>SAT Math:</strong> ${satMath} / 800</p>
-    <p><strong>SAT Writing:</strong> ${satWriting} / 800</p>
-    <p><strong>Awards:</strong> ${awards} / 10</p>
-    <hr>
-    <p><strong>Admission Chance:</strong> ${admissionChance.toFixed(1)}% (${getStatusEmoji(admissionChance)})</p>
-    <p><strong>Scholarship Chance:</strong> ${scholarshipChance.toFixed(1)}% (${getStatusEmoji(scholarshipChance)})</p>
-`;
+    // Admission logic
+    let admissionChance = Math.min(profileRating * 1.2, 100);
+    if (acceptanceRate < 10) admissionChance *= 0.7;
+    else if (acceptanceRate < 30) admissionChance *= 0.85;
 
-document.getElementById("results").innerHTML = results;
+    // Scholarship logic (more selective)
+    let scholarshipChance = 0;
+    if (profileRating > 90) scholarshipChance = 85 + (Math.random() * 10); // 85-95%
+    else if (profileRating > 80) scholarshipChance = 65 + (Math.random() * 10);
+    else if (profileRating > 70) scholarshipChance = 45 + (Math.random() * 10);
+    else scholarshipChance = 20 + (Math.random() * 15);
 
+    const getStatusEmoji = (score) => {
+        if (score >= 80) return "✅ Likely";
+        else if (score >= 60) return "⚠️ Borderline";
+        else return "❌ Unlikely";
+    };
+
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = `
+        <h3>Result for ${universityName}</h3>
+        <p><strong>Profile Rating:</strong> ${profileRating.toFixed(1)} / 100</p>
+        <p><strong>Olympiad Score:</strong> ${normalizedOlympiad.toFixed(1)} / 100</p>
+        <p><strong>Academic Score:</strong> ${academicScore} / 100</p>
+        <p><strong>Project Score:</strong> ${projectScore} / 100</p>
+        <p><strong>GPA:</strong> ${gpa !== null ? gpa : "N/A"} / 4.0</p>
+        <p><strong>IELTS:</strong> ${ielts !== null ? ielts : "N/A"} / 9.0</p>
+        <p><strong>SAT Math:</strong> ${satMath !== null ? satMath : "N/A"} / 800</p>
+        <p><strong>SAT Writing:</strong> ${satWriting !== null ? satWriting : "N/A"} / 800</p>
+        <p><strong>Awards:</strong> ${awards}</p>
+        <p><strong>Admission Chance:</strong> ${admissionChance.toFixed(1)}% - ${getStatusEmoji(admissionChance)}</p>
+        <p><strong>Scholarship Chance:</strong> ${scholarshipChance.toFixed(1)}% - ${getStatusEmoji(scholarshipChance)}</p>
+    `;
 }
-

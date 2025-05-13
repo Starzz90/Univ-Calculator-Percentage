@@ -14,33 +14,28 @@ function calculateProfileScore() {
   const acceptanceRate = parseFloat(document.getElementById("acceptanceRate").value) || 0;
 
   const totalOlympiadScore = (international * 3 + national * 2 + regional * 1);
-  const maxOlympiadScore = 10 * 3 + 10 * 2 + 10 * 1; // Max = 60
-  const olympiadScorePercent = (totalOlympiadScore / maxOlympiadScore) * 100;
+  const maxOlympiadScore = (10 * 3 + 10 * 2 + 10 * 1); // Max = 60
+  const olympiadRating = Math.round((totalOlympiadScore / maxOlympiadScore) * 100);
+  const academicRating = Math.round(academics);
+  const projectRating = Math.round(projects);
 
   const totalWeight = weightOlympiads + weightAcademics + weightProjects;
-  const normalizedOlympiad = (olympiadScorePercent || 0);
-  const normalizedAcademic = (academics || 0);
-  const normalizedProjects = (projects || 0);
 
-  const profileScore = (
-    (normalizedOlympiad * weightOlympiads + normalizedAcademic * weightAcademics + normalizedProjects * weightProjects)
-    / totalWeight
+  const profileRating = Math.round(
+    (olympiadRating * weightOlympiads +
+     academicRating * weightAcademics +
+     projectRating * weightProjects) / totalWeight
   );
 
-  // Profile Ratings
-  const olympiadRating = Math.round((totalOlympiadScore / maxOlympiadScore) * 100);
-  const academicRating = Math.round((academics / 100) * 100);
-  const projectRating = Math.round((projects / 100) * 100);
-  const profileRating = Math.round(profileScore);
+  // Random influence
+  const randomFactor = Math.random() * 10;
 
-  // Randomized Admission and Scholarship chances
-  const randomFactor = Math.random() * 10;  // Random factor for slight variation
+  let admissionChance = Math.min(
+    ((profileRating / 100) * (acceptanceRate * 1.5)) + randomFactor,
+    95
+  );
+  const overallAdmission = 100 - admissionChance;
 
-  // Estimate Admission Likelihood based on Profile and University Acceptance Rate
-  let admissionChance = (profileScore / 100) * (acceptanceRate * 1.5);
-  admissionChance = (Math.min(admissionChance + randomFactor, 95)); //Cap at 95%
-  const overallchance = 100-admissionChance;
-  // Scholarship Chance based on holistic profile
   let scholarshipChance = 0;
   if (gpa > 3.8) scholarshipChance += 30;
   else if (gpa > 3.5) scholarshipChance += 20;
@@ -53,19 +48,13 @@ function calculateProfileScore() {
   else if (awards >= 5) scholarshipChance += 15;
   else if (awards >= 2) scholarshipChance += 5;
 
-  if (profileScore >= 80) scholarshipChance += 20;
-  else if (profileScore >= 70) scholarshipChance += 10;
+  if (profileRating >= 80) scholarshipChance += 20;
+  else if (profileRating >= 70) scholarshipChance += 10;
 
-  scholarshipChance = (Math.min(scholarshipChance + randomFactor, admissionChance)); //Keep realistic: can't get scholarship without being admitted
-  const overallscholarship = 100 - scholarshipChance;
-  // Emoji Results
-  const getStatusEmoji = (percent) => {
-    if (percent >= 80) return "🟢 Likely";
-    if (percent >= 60) return "🟡 Borderline";
-    return "🔴 Unlikely";
-  };
+  scholarshipChance = Math.min(scholarshipChance + randomFactor, admissionChance);
+  const overallScholarship = 100 - scholarshipChance;
 
-  const results = `
+  const result = `
     <h3>Results for ${universityName}</h3>
     <p><strong>Profile Rating:</strong> ${profileRating} / 100</p>
     <p><strong>Academic Rating:</strong> ${academicRating} / 100</p>
@@ -73,9 +62,11 @@ function calculateProfileScore() {
     <p><strong>Project Rating:</strong> ${projectRating} / 100</p>
     <hr>
     <p><strong>University:</strong> ${universityName}</p>
-    <p><strong>Admission Chance:</strong> ${overallchance.toFixed(1)}% (${getStatusEmoji(overallchance)})</p>
-    <p><strong>Scholarship Chance:</strong> ${overallscholarship.toFixed(1)}% (${getStatusEmoji(overallscholarship)})</p>
+    <p><strong>Admission:</strong> ${admissionChance.toFixed(1)}% chance of getting in</p>
+    <p><strong>Rejection:</strong> ${overallAdmission.toFixed(1)}% chance of rejection</p>
+    <p><strong>Scholarship:</strong> ${scholarshipChance.toFixed(1)}% chance</p>
+    <p><strong>No Scholarship:</strong> ${overallScholarship.toFixed(1)}% chance</p>
   `;
 
-  document.getElementById("results").innerHTML = results;
+  document.getElementById("results").innerHTML = result;
 }

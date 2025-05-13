@@ -17,7 +17,7 @@ function calculateProfileScore() {
     const acceptanceRate = parseFloat(document.getElementById('acceptanceRate').value);
 
     // Validate weights sum to 100
-    const totalWeight = weightOlympiads + weightAcademics + weightProjects;
+    const totalWeight = weightOlympiads + weightAcademics + weightProjects + weightIELTS;
     if (totalWeight !== 100) {
         document.getElementById('results').innerHTML = "<p style='color: red;'>⚠️ The weights must sum to 100.</p>";
         return;
@@ -30,9 +30,17 @@ function calculateProfileScore() {
         academics * (weightAcademics / 100) +
         projects * (weightProjects / 100)
     ).toFixed(2);
-
+    
     const actualRate = 100 - acceptanceRate;
 
+    let result = "";
+    if (GPA >= 3.8 && IELTS >= 7.5) {
+        result = "You meet the academic and English requirements.";
+    } if (GPA >= 3.5 && GPA <= 3.7 && IELTS >= 6.0 && IELTS <= 7.0) {
+        result = "You meet in the middle requirements.";
+    } else {
+        result = "Your GPA or IELTS is outside the accepted range.";
+    }
     // Verdict
     let verdict = "";
     if (totalScore >= actualRate) {

@@ -1,64 +1,82 @@
 function calculateProfileScore() {
-  const intl = parseFloat(document.getElementById("international").value);
-  const nat = parseFloat(document.getElementById("national").value);
-  const reg = parseFloat(document.getElementById("regional").value);
+    // Collect inputs
+    const international = parseInt(document.getElementById('international').value);
+    const national = parseInt(document.getElementById('national').value);
+    const regional = parseInt(document.getElementById('regional').value);
+    const academics = parseFloat(document.getElementById('academics').value);
+    const projects = parseFloat(document.getElementById('projects').value);
+    const gpa = parseFloat(document.getElementById('gpa').value);
+    const ielts = parseFloat(document.getElementById('ielts').value);
 
-  const gpa = parseFloat(document.getElementById("gpa").value);
-  const ielts = parseFloat(document.getElementById("ielts").value);
-  const awards = parseFloat(document.getElementById("awards").value);
+    const weightOlympiads = parseFloat(document.getElementById('weightOlympiads').value);
+    const weightAcademics = parseFloat(document.getElementById('weightAcademics').value);
+    const weightProjects = parseFloat(document.getElementById('weightProjects').value);
 
-  const academics = parseFloat(document.getElementById("academics").value);
-  const projects = parseFloat(document.getElementById("projects").value);
+    const universityName = document.getElementById('universityName').value;
+    const acceptanceRate = parseFloat(document.getElementById('acceptanceRate').value);
 
-  const wOly = parseFloat(document.getElementById("weightOlympiads").value);
-  const wAca = parseFloat(document.getElementById("weightAcademics").value);
-  const wPro = parseFloat(document.getElementById("weightProjects").value);
+    // Validate weights
+    const totalWeight = weightOlympiads + weightAcademics + weightProjects;
+    if (totalWeight !== 100) {
+        document.getElementById('results').innerHTML = "<p style='color: red;'>⚠️ The weights must sum to 100.</p>";
+        return;
+    }
 
-  const universityName = document.getElementById("universityName").value;
-  const acceptanceRate = parseFloat(document.getElementById("acceptanceRate").value);
+    // Scores
+    const olympiadScore = (((international + national + regional) * 10) / 3).toFixed(2);
+    const totalScore = (
+        olympiadScore * (weightOlympiads / 100) +
+        academics * (weightAcademics / 100) +
+        projects * (weightProjects / 100)
+    ).toFixed(2);
 
-  if (wOly + wAca + wPro !== 100) {
-    alert("The total weight must equal 100%");
-    return;
-  }
+    const actualRate = 100 - acceptanceRate;
 
-  const olympiadScore = (intl * 3 + nat * 2 + reg * 1);
-  const maxOlympiadScore = (10 * 3 + 10 * 2 + 10 * 1); // = 60
-  const normalizedOlympiad = (olympiadScore / maxOlympiadScore) * 100;
+    // Academic result
+    let academicResult = "";
+    if (gpa >= 3.8 && ielts >= 7.5) {
+        academicResult = "✅ You meet the academic and English requirements.";
+    } else if (gpa >= 3.5 && gpa <= 3.7 && ielts >= 6.0 && ielts <= 7.0) {
+        academicResult = "⚠️ You partially meet the academic and English requirements.";
+    } else {
+        academicResult = "❌ Your GPA or IELTS is below standard requirements.";
+    }
 
-  const weightedScore = (
-    normalizedOlympiad * (wOly / 100) +
-    academics * (wAca / 100) +
-    projects * (wPro / 100)
-  ).toFixed(2);
+    // Verdict
+    let verdict = "";
+    let emoji = "";
+    let profileRating = Math.min(100, totalScore);
 
-  // Profile rating interpretation
-  let profileRatingText = "";
-  const scoreNum = parseFloat(weightedScore);
+    if (totalScore >= actualRate + 10) {
+        verdict = `🌟 Likely Accepted into ${universityName}`;
+        emoji = "🌟";
+    } else if (totalScore >= actualRate - 10) {
+        verdict = `📈 Borderline Accepted into ${universityName}`;
+        emoji = "📈";
+    } else {
+        verdict = `❌ Unlikely to be Accepted into ${universityName}`;
+        emoji = "❌";
+    }
 
-  if (scoreNum >= 90) profileRatingText = "Excellent Profile";
-  else if (scoreNum >= 75) profileRatingText = "Strong Profile";
-  else if (scoreNum >= 60) profileRatingText = "Average Profile";
-  else profileRatingText = "Needs Improvement";
-
-  // Admission chance blending
-  const admissionChance = (
-    0.5 * acceptanceRate +
-    0.5 * scoreNum
-  ).toFixed(2);
-
-  // Scholarship estimation
-  let scholarshipChance = 0;
-  if (gpa) scholarshipChance += Math.min((gpa / 4.0) * 40, 40);
-  if (ielts) scholarshipChance += Math.min((ielts / 9) * 30, 30);
-  if (awards) scholarshipChance += Math.min(awards * 3, 30);
-  scholarshipChance = Math.min(scholarshipChance, 100).toFixed(2);
-
-  document.getElementById("results").innerHTML = `
-    <h3>Results for ${universityName}</h3>
-    <p><strong>Weighted Profile Score:</strong> ${weightedScore} / 100</p>
-    <p><strong>Profile Rating:</strong> ${profileRatingText}</p>
-    <p><strong>Estimated Admission Chance:</strong> ${admissionChance}%</p>
-    <p><strong>Estimated Scholarship Probability:</strong> ${scholarshipChance}%</p>
-  `;
+    // Display results
+    document.getElementById('results').innerHTML = `
+        <h3>📊 Profile Analysis Result</h3>
+        <ul>
+            <li><strong>University:</strong> ${universityName}</li>
+            <li><strong>University Acceptance Rate:</strong> ${acceptanceRate}%</li>
+            <li><strong>Required Score to Pass:</strong> ${actualRate.toFixed(2)}%</li>
+            <li><strong>International Awards:</strong> ${international}</li>
+            <li><strong>National Awards:</strong> ${national}</li>
+            <li><strong>Regional Awards:</strong> ${regional}</li>
+            <li><strong>Olympiad Score:</strong> ${olympiadScore}</li>
+            <li><strong>Academic Score:</strong> ${academics}</li>
+            <li><strong>Project Score:</strong> ${projects}</li>
+            <li><strong>Total Weighted Score:</strong> ${totalScore}%</li>
+            <li><strong>GPA:</strong> ${gpa}</li>
+            <li><strong>IELTS:</strong> ${ielts}</li>
+            <li><strong>Profile Rating:</strong> ${profileRating}/100</li>
+        </ul>
+        <h4>${emoji} Verdict: ${verdict}</h4>
+        <p>${academicResult}</p>
+    `;
 }

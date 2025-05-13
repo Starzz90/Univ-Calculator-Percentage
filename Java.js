@@ -11,7 +11,7 @@ function calculateProfileScore() {
     const weightOlympiads = parseFloat(document.getElementById('weightOlympiads').value);
     const weightAcademics = parseFloat(document.getElementById('weightAcademics').value);
     const weightProjects = parseFloat(document.getElementById('weightProjects').value);
-    
+
     const universityName = document.getElementById('universityName').value;
     const acceptanceRate = parseFloat(document.getElementById('acceptanceRate').value);
 
@@ -29,7 +29,7 @@ function calculateProfileScore() {
         academics * (weightAcademics / 100) +
         projects * (weightProjects / 100)
     ).toFixed(2);
-    
+
     const actualRate = 100 - acceptanceRate;
 
     let result = "";

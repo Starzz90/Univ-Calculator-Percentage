@@ -7,8 +7,8 @@ function calculateProfileScore() {
   const awards = parseInt(document.getElementById('awards').value) || 0;
   const academics = parseFloat(document.getElementById('academics').value);
   const projects = parseFloat(document.getElementById('projects').value);
-  const satMath = parseInt(document.getElementById('satMath').value) || 0;
-  const satWriting = parseInt(document.getElementById('satWriting').value) || 0;
+  const satMath = parseInt(document.getElementById('satMath').value) || null;
+  const satWriting = parseInt(document.getElementById('satWriting').value) || null;
 
   const weightOly = parseFloat(document.getElementById('weightOlympiads').value);
   const weightAcad = parseFloat(document.getElementById('weightAcademics').value);
@@ -24,85 +24,83 @@ function calculateProfileScore() {
     return;
   }
 
-  // Normalize Olympiad score
-  const olympiadScore = Math.min(100, (intl * 15 + national * 10 + regional * 5));
+  // --- Max limits ---
+  const maxOlympiadScore = 100;
+  const maxAcademicScore = 100;
+  const maxProjectScore = 100;
+  const maxGPA = 4.0;
+  const maxIELTS = 9.0;
+  const maxSAT = 1600;
 
-  // Weighted total score
-  const totalScore = (
+  // --- Scores ---
+  const olympiadScore = Math.min(100, (intl * 15 + national * 10 + regional * 5));
+  const weightedTotalScore = (
     (olympiadScore * weightOly / 100) +
     (academics * weightAcad / 100) +
     (projects * weightProj / 100)
   );
+  const profileRating = Math.round(weightedTotalScore);
 
-  // Profile rating out of 100
-  const profileRating = Math.round(totalScore);
-
-  // Admission estimate
-  let admissionStatus, emoji;
+  // --- Admission logic ---
+  let admissionStatus = "", emoji = "";
   if (profileRating >= 90 && acceptanceRate > 10) {
-    admissionStatus = "Highly Likely";
-    emoji = "✅";
+    admissionStatus = "Highly Likely"; emoji = "✅";
   } else if (profileRating >= 75) {
-    admissionStatus = "Likely";
-    emoji = "🟡";
+    admissionStatus = "Likely"; emoji = "🟡";
   } else if (profileRating >= 60) {
-    admissionStatus = "Borderline";
-    emoji = "⚠️";
+    admissionStatus = "Borderline"; emoji = "⚠️";
   } else {
-    admissionStatus = "Unlikely";
-    emoji = "❌";
+    admissionStatus = "Unlikely"; emoji = "❌";
   }
 
-  // Scholarship estimation (based on holistic profile)
+  // --- Scholarship Logic ---
   let scholarshipChance = 0;
-  if (profileRating >= 90) {
-    scholarshipChance += 40;
-  } else if (profileRating >= 75) {
-    scholarshipChance += 30;
-  } else if (profileRating >= 60) {
-    scholarshipChance += 20;
-  } else {
-    scholarshipChance += 5;
-  }
+  if (profileRating >= 90) scholarshipChance += 40;
+  else if (profileRating >= 80) scholarshipChance += 30;
+  else if (profileRating >= 70) scholarshipChance += 20;
+  else if (profileRating >= 60) scholarshipChance += 10;
 
   if (gpa !== null) {
     if (gpa >= 3.9) scholarshipChance += 20;
     else if (gpa >= 3.7) scholarshipChance += 10;
+    else if (gpa >= 3.5) scholarshipChance += 5;
   }
 
   if (ielts !== null) {
     if (ielts >= 8) scholarshipChance += 15;
     else if (ielts >= 7) scholarshipChance += 10;
+    else if (ielts >= 6.5) scholarshipChance += 5;
   }
 
   if (awards >= 5) scholarshipChance += 10;
   else if (awards >= 2) scholarshipChance += 5;
 
-  const satTotal = satMath + satWriting;
-  if (satTotal >= 1500) scholarshipChance += 15;
-  else if (satTotal >= 1350) scholarshipChance += 10;
+  if (satMath && satWriting) {
+    const satTotal = satMath + satWriting;
+    if (satTotal >= 1500) scholarshipChance += 10;
+    else if (satTotal >= 1400) scholarshipChance += 7;
+    else if (satTotal >= 1300) scholarshipChance += 5;
+  }
 
-  // Cap at 95%
   scholarshipChance = Math.min(95, scholarshipChance);
 
+  // --- Output ---
   const results = document.getElementById("results");
   results.innerHTML = `
-    <h3>Results for ${universityName}</h3>
-    <p><strong>Profile Rating:</strong> ${profileRating}/100</p>
-    <p><strong>Admission Likelihood:</strong> ${admissionStatus} ${emoji}</p>
-    <p><strong>Scholarship Estimate:</strong> ${scholarshipChance}% chance</p>
-    <hr>
-    <h4>Profile Breakdown:</h4>
+    <h3>University Profile Evaluation for <u>${universityName}</u></h3>
     <ul>
-      <li><strong>Olympiad Score:</strong> ${olympiadScore}/100</li>
-      <li><strong>Academic Score:</strong> ${academics}/100</li>
-      <li><strong>Project Score:</strong> ${projects}/100</li>
-      <li><strong>GPA:</strong> ${gpa ?? "Not Provided"}/4.0</li>
-      <li><strong>IELTS:</strong> ${ielts ?? "Not Provided"}/10</li>
-      <li><strong>SAT Math:</strong> ${satMath || "Not Provided"}/800</li>
-      <li><strong>SAT Writing:</strong> ${satWriting || "Not Provided"}/800</li>
+      <li><strong>Profile Rating:</strong> ${profileRating} / 100</li>
+      <li><strong>Olympiad Score:</strong> ${olympiadScore} / ${maxOlympiadScore}</li>
+      <li><strong>Academic Score:</strong> ${academics} / ${maxAcademicScore}</li>
+      <li><strong>Project Score:</strong> ${projects} / ${maxProjectScore}</li>
+      <li><strong>GPA:</strong> ${gpa !== null ? `${gpa} / ${maxGPA}` : "Not Provided"}</li>
+      <li><strong>IELTS:</strong> ${ielts !== null ? `${ielts} / ${maxIELTS}` : "Not Provided"}</li>
+      <li><strong>SAT Math:</strong> ${satMath !== null ? `${satMath} / 800` : "Not Provided"}</li>
+      <li><strong>SAT Writing:</strong> ${satWriting !== null ? `${satWriting} / 800` : "Not Provided"}</li>
       <li><strong>Total Awards:</strong> ${awards}</li>
-      <li><strong>University Acceptance Rate:</strong> ${acceptanceRate}%/100%</li>
+      <li><strong>University Acceptance Rate:</strong> ${acceptanceRate}%</li>
     </ul>
+    <p><strong>Admission Likelihood:</strong> ${admissionStatus} ${emoji}</p>
+    <p><strong>Scholarship Chance:</strong> ${scholarshipChance}%</p>
   `;
 }

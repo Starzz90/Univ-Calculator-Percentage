@@ -1,5 +1,3 @@
-// Updated JavaScript for University Admission and Scholarship Calculator
-
 function calculateProfileScore() {
     const international = parseInt(document.getElementById("international").value) || 0;
     const national = parseInt(document.getElementById("national").value) || 0;
@@ -14,8 +12,6 @@ function calculateProfileScore() {
     const weightProjects = parseFloat(document.getElementById("weightProjects").value) || 0;
     const universityName = document.getElementById("universityName").value;
     const acceptanceRate = parseFloat(document.getElementById("acceptanceRate").value) || 0;
-    const satMath = parseInt(document.getElementById("satMath")?.value) || 0;
-    const satWriting = parseInt(document.getElementById("satWriting")?.value) || 0;
 
     const totalOlympiadScore = (international * 3 + national * 2 + regional * 1);
     const maxOlympiadScore = 10 * 3 + 10 * 2 + 10 * 1; // Max = 60
@@ -54,7 +50,7 @@ function calculateProfileScore() {
     if (profileScore >= 80) scholarshipChance += 20;
     else if (profileScore >= 70) scholarshipChance += 10;
 
-    scholarshipChance = Math.min(scholarshipChance, admissionChance); // Keep realistic: can't get scholarship without being admitted
+    scholarshipChance = Math.min(scholarshipChance, admissionChance); // Can't get scholarship if not admitted
 
     // Emoji Results
     const getStatusEmoji = (percent) => {
@@ -71,8 +67,6 @@ function calculateProfileScore() {
         <p><strong>Project Score:</strong> ${projects} / 100</p>
         <p><strong>GPA:</strong> ${gpa} / 4.0</p>
         <p><strong>IELTS:</strong> ${ielts} / 9.0</p>
-        <p><strong>SAT Math:</strong> ${satMath} / 800</p>
-        <p><strong>SAT Writing:</strong> ${satWriting} / 800</p>
         <p><strong>Awards:</strong> ${awards} / 10</p>
         <hr>
         <p><strong>Admission Chance:</strong> ${admissionChance.toFixed(1)}% (${getStatusEmoji(admissionChance)})</p>

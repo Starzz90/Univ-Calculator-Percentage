@@ -38,8 +38,8 @@ function calculateProfileScore() {
 
   // Estimate Admission Likelihood based on Profile and University Acceptance Rate
   let admissionChance = (profileScore / 100) * (acceptanceRate * 1.5);
-  admissionChance = 100-(Math.min(admissionChance + randomFactor, 95)); //Cap at 95%
-
+  admissionChance = (Math.min(admissionChance + randomFactor, 95)); //Cap at 95%
+  overallchance = 100-admissionChance;
   // Scholarship Chance based on holistic profile
   let scholarshipChance = 0;
   if (gpa > 3.8) scholarshipChance += 30;
@@ -56,8 +56,8 @@ function calculateProfileScore() {
   if (profileScore >= 80) scholarshipChance += 20;
   else if (profileScore >= 70) scholarshipChance += 10;
 
-  scholarshipChance = 100-(Math.min(scholarshipChance + randomFactor, admissionChance)); //Keep realistic: can't get scholarship without being admitted
-
+  scholarshipChance = (Math.min(scholarshipChance + randomFactor, admissionChance)); //Keep realistic: can't get scholarship without being admitted
+  overallscholarship = 100 - scholarshipChance;
   // Emoji Results
   const getStatusEmoji = (percent) => {
     if (percent >= 80) return "🟢 Likely";
@@ -73,8 +73,8 @@ function calculateProfileScore() {
     <p><strong>Project Rating:</strong> ${projectRating} / 100</p>
     <hr>
     <p><strong>University:</strong> ${universityName}</p>
-    <p><strong>Admission Chance:</strong> ${admissionChance.toFixed(1)}% (${getStatusEmoji(admissionChance)})</p>
-    <p><strong>Scholarship Chance:</strong> ${scholarshipChance.toFixed(1)}% (${getStatusEmoji(scholarshipChance)})</p>
+    <p><strong>Admission Chance:</strong> ${overallchance.toFixed(1)}% (${getStatusEmoji(overallchance)})</p>
+    <p><strong>Scholarship Chance:</strong> ${overallscholarship.toFixed(1)}% (${getStatusEmoji(overallscholarship)})</p>
   `;
 
   document.getElementById("results").innerHTML = results;

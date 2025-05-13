@@ -80,5 +80,5 @@ resultsDiv.innerHTML = `
 
 }
 
-Give me this professional layout HTML
+
 

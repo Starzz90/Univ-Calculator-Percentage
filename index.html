@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>University Acceptance Calculator</title>
+  <script src="Java.js" defer></script>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -17,13 +18,6 @@
     h1 {
       text-align: center;
       color: #1e3a8a;
-      margin-bottom: 20px;
-    }
-
-    h3 {
-      text-align: center;
-      font-weight: normal;
-      color: #555;
       margin-bottom: 30px;
     }
 
@@ -73,7 +67,7 @@
       cursor: pointer;
       transition: background-color 0.3s ease;
       display: block;
-      margin: 15px auto;
+      margin: 10px auto;
     }
 
     button:hover {
@@ -98,32 +92,41 @@
       margin: 8px 0;
       font-size: 1em;
     }
+
+    ul {
+      padding-left: 20px;
+    }
   </style>
 </head>
 <body>
-
   <h1>🎓 University Admission Profile Score Calculator</h1>
-  <h3>*Disclaimer: Admission and scholarship depend on interviews, essays, and other holistic factors.</h3>
+  <h3>*Disclaimer: Admission also depends on interviews, essays, and external tests</h3>
 
   <form id="calculatorForm">
     <fieldset>
-      <legend>🏅 Olympiad Achievements (0–10)</legend>
-      <label>International: <input type="number" id="international" min="0" max="10" required></label>
-      <label>National: <input type="number" id="national" min="0" max="10" required></label>
-      <label>Regional: <input type="number" id="regional" min="0" max="10" required></label>
+      <legend>🏅 Olympiad Achievements (0–10 Awards)</legend>
+      <label>International: <input type="number" id="international" min="0" max="10"></label>
+      <label>National: <input type="number" id="national" min="0" max="10"></label>
+      <label>Regional: <input type="number" id="regional" min="0" max="10"></label>
     </fieldset>
 
     <fieldset>
-      <legend>🎓 GPA, IELTS, and Awards</legend>
-      <label>GPA (out of 4.0): <input type="number" id="gpa" step="0.01"></label>
-      <label>IELTS Score: <input type="number" id="ielts" step="0.5"></label>
-      <label>Number of Achievements/Awards: <input type="number" id="awards" step="1"></label>
+      <legend>🎓 Academic Details</legend>
+      <label>GPA (out of 4.0): <input type="number" id="gpa" step="0.01" placeholder="Optional for some countries"></label>
+      <label>IELTS Score: <input type="number" id="ielts" step="0.5" placeholder="Optional for non-English countries"></label>
+      <label>Number of Awards: <input type="number" id="awards"></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>✍️ SAT Scores (Optional)</legend>
+      <label>SAT Math Score (out of 800): <input type="number" id="satMath" min="200" max="800"></label>
+      <label>SAT Writing Score (out of 800): <input type="number" id="satWriting" min="200" max="800"></label>
     </fieldset>
 
     <fieldset>
       <legend>📚 Academic & Project Scores (0–100)</legend>
       <label>Academic Score: <input type="number" id="academics" min="0" max="100" required></label>
-      <label>Project Score (Major-related): <input type="number" id="projects" min="0" max="100" required></label>
+      <label>Project Score (based on major): <input type="number" id="projects" min="0" max="100" required></label>
     </fieldset>
 
     <fieldset>
@@ -143,7 +146,5 @@
   </form>
 
   <div id="results"></div>
-
-  <script src="Java.js"></script>
 </body>
 </html>

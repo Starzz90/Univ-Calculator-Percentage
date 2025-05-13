@@ -11,13 +11,12 @@ function calculateProfileScore() {
     const weightOlympiads = parseFloat(document.getElementById('weightOlympiads').value);
     const weightAcademics = parseFloat(document.getElementById('weightAcademics').value);
     const weightProjects = parseFloat(document.getElementById('weightProjects').value);
-    const weightIELTS = parseFloat(document.getElementById('weightIELTS').value);
-
+    
     const universityName = document.getElementById('universityName').value;
     const acceptanceRate = parseFloat(document.getElementById('acceptanceRate').value);
 
     // Validate weights sum to 100
-    const totalWeight = weightOlympiads + weightAcademics + weightProjects + weightIELTS;
+    const totalWeight = weightOlympiads + weightAcademics + weightProjects; 
     if (totalWeight !== 100) {
         document.getElementById('results').innerHTML = "<p style='color: red;'>⚠️ The weights must sum to 100.</p>";
         return;

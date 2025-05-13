@@ -1,77 +1,48 @@
 function calculateProfileScore() {
-    // Collect inputs
-    const international = parseInt(document.getElementById('international').value);
-    const national = parseInt(document.getElementById('national').value);
-    const regional = parseInt(document.getElementById('regional').value);
-    const academics = parseFloat(document.getElementById('academics').value);
-    const projects = parseFloat(document.getElementById('projects').value);
-    const gpa = parseFloat(document.getElementById('gpa').value);
-    const ielts = parseFloat(document.getElementById('ielts').value);
+    // Retrieve all form inputs
+    const international = parseInt(document.getElementById("international").value) || 0;
+    const national = parseInt(document.getElementById("national").value) || 0;
+    const regional = parseInt(document.getElementById("regional").value) || 0;
+    const academics = parseFloat(document.getElementById("academics").value) || 0;
+    const projects = parseFloat(document.getElementById("projects").value) || 0;
+    const gpa = parseFloat(document.getElementById("gpa").value) || 0;
+    const ielts = parseFloat(document.getElementById("ielts").value) || 0;
+    const awards = parseInt(document.getElementById("awards").value) || 0;
 
-    const weightOlympiads = parseFloat(document.getElementById('weightOlympiads').value);
-    const weightAcademics = parseFloat(document.getElementById('weightAcademics').value);
-    const weightProjects = parseFloat(document.getElementById('weightProjects').value);
+    const weightOlympiads = parseFloat(document.getElementById("weightOlympiads").value) || 0;
+    const weightAcademics = parseFloat(document.getElementById("weightAcademics").value) || 0;
+    const weightProjects = parseFloat(document.getElementById("weightProjects").value) || 0;
 
-    const universityName = document.getElementById('universityName').value;
-    const acceptanceRate = parseFloat(document.getElementById('acceptanceRate').value);
+    const universityName = document.getElementById("universityName").value;
+    const acceptanceRate = parseFloat(document.getElementById("acceptanceRate").value) || 0;
 
-    // Validate weights sum to 100
-    const totalWeight = weightOlympiads + weightAcademics + weightProjects; 
+    // Validation for total weight
+    const totalWeight = weightOlympiads + weightAcademics + weightProjects;
     if (totalWeight !== 100) {
-        document.getElementById('results').innerHTML = "<p style='color: red;'>⚠️ The weights must sum to 100.</p>";
+        alert("Total weight must equal 100%");
         return;
     }
 
-    // Calculations
-    const olympiadScore = (((international + national + regional) * 10) / 3).toFixed(2);
-    const totalScore = (
-        olympiadScore * (weightOlympiads / 100) +
-        academics * (weightAcademics / 100) +
-        projects * (weightProjects / 100)
-    ).toFixed(2);
+    // Calculate scores
+    const olympiadScore = (international * 3 + national * 2 + regional * 1);
+    const olympiadWeighted = olympiadScore * (weightOlympiads / 100);
+    const academicsWeighted = academics * (weightAcademics / 100);
+    const projectsWeighted = projects * (weightProjects / 100);
 
-    const actualRate = 100 - acceptanceRate;
+    const profileScore = olympiadWeighted + academicsWeighted + projectsWeighted;
 
-    let result = "";
-    if (GPA >= 3.8 && IELTS >= 7.5) {
-        result = "You meet the academic and English requirements.";
-    } if (GPA >= 3.5 && GPA <= 3.7 && IELTS >= 6.0 && IELTS <= 7.0) {
-        result = "You meet in the middle requirements.";
-    } else {
-        result = "Your GPA or IELTS is outside the accepted range.";
-    }
-    // Verdict
-    let verdict = "";
-    if (totalScore >= actualRate) {
-        verdict = `✅ Likely accepted into ${universityName}.`;
-    } else if (totalScore >= actualRate - 30) {
-        verdict = `🤔 Borderline for ${universityName}.`;
-    } else {
-        verdict = `❌ Unlikely to be accepted into ${universityName}.`;
-    }
+    // Scholarship estimation logic
+    const gpaPercent = (gpa / 4) * 100;
+    const ieltsPercent = (ielts / 9) * 100;
+    const awardPercent = (awards / 10) * 100;
 
-    // Output
-    document.getElementById('results').innerHTML = `
-        <h3>📊 Results:</h3>
-        <p><strong>Olympiad Score:</strong> ${olympiadScore}</p>
-        <p><strong>Academics Score:</strong> ${academics}</p>
-        <p><strong>Projects Score:</strong> ${projects}</p>
-        <p><strong>Total Weighted Score:</strong> ${totalScore}%</p>
-        <p>${verdict}</p>
+    const scholarshipScore = Math.round((gpaPercent + ieltsPercent + awardPercent) / 3);
+
+    // Display results
+    document.getElementById("results").innerHTML = `
+        <h3>Results for ${universityName}</h3>
+        <p><strong>Profile Score:</strong> ${profileScore.toFixed(2)} / 100</p>
+        <p><strong>Scholarship Score:</strong> ${scholarshipScore} / 100</p>
+        <p><strong>Acceptance Rate:</strong> ${acceptanceRate}%</p>
     `;
-
-    // Optional: store results for later use (e.g., exporting, graphs, database)
-    const profileData = {
-        olympiadScore: parseFloat(olympiadScore),
-        academicsScore: academics,
-        projectsScore: projects,
-        totalScore: parseFloat(totalScore),
-        verdict: verdict,
-        university: universityName,
-        acceptanceRate: acceptanceRate
-    };
-
-    console.log("Stored Profile Data:", profileData);
-    console.log(profileData);
-    // You can send `profileData` to a server or store in localStorage/sessionStorage if needed
 }

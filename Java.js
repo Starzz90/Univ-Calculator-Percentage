@@ -24,15 +24,14 @@ function calculateProfileScore() {
     return;
   }
 
-  // --- Max limits ---
+  // Max Limits
   const maxOlympiadScore = 100;
   const maxAcademicScore = 100;
   const maxProjectScore = 100;
   const maxGPA = 4.0;
   const maxIELTS = 9.0;
-  const maxSAT = 1600;
 
-  // --- Scores ---
+  // Calculate scores
   const olympiadScore = Math.min(100, (intl * 15 + national * 10 + regional * 5));
   const weightedTotalScore = (
     (olympiadScore * weightOly / 100) +
@@ -41,19 +40,19 @@ function calculateProfileScore() {
   );
   const profileRating = Math.round(weightedTotalScore);
 
-  // --- Admission logic ---
-  let admissionStatus = "", emoji = "";
+  // Admission % Estimate
+  let admissionStatus = "", emoji = "", admissionPercent = 0;
   if (profileRating >= 90 && acceptanceRate > 10) {
-    admissionStatus = "Highly Likely"; emoji = "✅";
+    admissionStatus = "Highly Likely"; emoji = "✅"; admissionPercent = 90;
   } else if (profileRating >= 75) {
-    admissionStatus = "Likely"; emoji = "🟡";
+    admissionStatus = "Likely"; emoji = "🟡"; admissionPercent = 70;
   } else if (profileRating >= 60) {
-    admissionStatus = "Borderline"; emoji = "⚠️";
+    admissionStatus = "Borderline"; emoji = "⚠️"; admissionPercent = 50;
   } else {
-    admissionStatus = "Unlikely"; emoji = "❌";
+    admissionStatus = "Unlikely"; emoji = "❌"; admissionPercent = 20;
   }
 
-  // --- Scholarship Logic ---
+  // Scholarship Logic
   let scholarshipChance = 0;
   if (profileRating >= 90) scholarshipChance += 40;
   else if (profileRating >= 80) scholarshipChance += 30;
@@ -84,7 +83,7 @@ function calculateProfileScore() {
 
   scholarshipChance = Math.min(95, scholarshipChance);
 
-  // --- Output ---
+  // Output results
   const results = document.getElementById("results");
   results.innerHTML = `
     <h3>University Profile Evaluation for <u>${universityName}</u></h3>
@@ -100,7 +99,7 @@ function calculateProfileScore() {
       <li><strong>Total Awards:</strong> ${awards}</li>
       <li><strong>University Acceptance Rate:</strong> ${acceptanceRate}%</li>
     </ul>
-    <p><strong>Admission Likelihood:</strong> ${admissionStatus} ${emoji}</p>
+    <p><strong>Admission Likelihood:</strong> ${admissionStatus} ${emoji} (${admissionPercent}%)</p>
     <p><strong>Scholarship Chance:</strong> ${scholarshipChance}%</p>
   `;
 }

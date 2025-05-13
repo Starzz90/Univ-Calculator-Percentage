@@ -38,7 +38,7 @@ function calculateProfileScore() {
 
   // Estimate Admission Likelihood based on Profile and University Acceptance Rate
   let admissionChance = (profileScore / 100) * (acceptanceRate * 1.5);
-  admissionChance = Math.min(admissionChance + randomFactor, 95); // Cap at 95%
+  admissionChance = 100-(Math.min(admissionChance + randomFactor, 95)); //Cap at 95%
 
   // Scholarship Chance based on holistic profile
   let scholarshipChance = 0;
@@ -56,7 +56,7 @@ function calculateProfileScore() {
   if (profileScore >= 80) scholarshipChance += 20;
   else if (profileScore >= 70) scholarshipChance += 10;
 
-  scholarshipChance = Math.min(scholarshipChance + randomFactor, admissionChance); // Keep realistic: can't get scholarship without being admitted
+  scholarshipChance = 100-(Math.min(scholarshipChance + randomFactor, admissionChance)); //Keep realistic: can't get scholarship without being admitted
 
   // Emoji Results
   const getStatusEmoji = (percent) => {

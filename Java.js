@@ -1,82 +1,108 @@
-// JavaScript File: Java.js
+function calculateProfileScore() {
+  const intl = parseInt(document.getElementById('international').value) || 0;
+  const national = parseInt(document.getElementById('national').value) || 0;
+  const regional = parseInt(document.getElementById('regional').value) || 0;
+  const gpa = parseFloat(document.getElementById('gpa').value) || null;
+  const ielts = parseFloat(document.getElementById('ielts').value) || null;
+  const awards = parseInt(document.getElementById('awards').value) || 0;
+  const academics = parseFloat(document.getElementById('academics').value);
+  const projects = parseFloat(document.getElementById('projects').value);
+  const satMath = parseInt(document.getElementById('satMath').value) || 0;
+  const satWriting = parseInt(document.getElementById('satWriting').value) || 0;
 
-function calculateProfileScore() { const intl = parseInt(document.getElementById("international").value) || 0; const nat = parseInt(document.getElementById("national").value) || 0; const reg = parseInt(document.getElementById("regional").value) || 0; const gpa = parseFloat(document.getElementById("gpa").value) || 0; const ielts = parseFloat(document.getElementById("ielts").value) || 0; const awards = parseInt(document.getElementById("awards").value) || 0; const academics = parseFloat(document.getElementById("academics").value); const projects = parseFloat(document.getElementById("projects").value); const weightOly = parseFloat(document.getElementById("weightOlympiads").value); const weightAca = parseFloat(document.getElementById("weightAcademics").value); const weightPro = parseFloat(document.getElementById("weightProjects").value); const uniName = document.getElementById("universityName").value; const acceptanceRate = parseFloat(document.getElementById("acceptanceRate").value); const satMath = parseInt(document.getElementById("satMath").value) || 0; const satWriting = parseInt(document.getElementById("satWriting").value) || 0;
+  const weightOly = parseFloat(document.getElementById('weightOlympiads').value);
+  const weightAcad = parseFloat(document.getElementById('weightAcademics').value);
+  const weightProj = parseFloat(document.getElementById('weightProjects').value);
 
-const nonEnglish = !gpa && !ielts; // Non-English countries
+  const universityName = document.getElementById('universityName').value;
+  const acceptanceRate = parseFloat(document.getElementById('acceptanceRate').value);
 
-const olympiadScore = Math.min(10, intl * 3 + nat * 2 + reg * 1);
-const totalWeight = weightOly + weightAca + weightPro;
+  const totalWeight = weightOly + weightAcad + weightProj;
 
-const normalizedOlympiad = (olympiadScore / 10) * (weightOly / totalWeight) * 100;
-const normalizedAcademics = (academics / 100) * (weightAca / totalWeight) * 100;
-const normalizedProjects = (projects / 100) * (weightPro / totalWeight) * 100;
+  if (totalWeight !== 100) {
+    alert("Weights must total 100%");
+    return;
+  }
 
-const profileScore = (normalizedOlympiad + normalizedAcademics + normalizedProjects).toFixed(2);
+  // Normalize Olympiad score
+  const olympiadScore = Math.min(100, (intl * 15 + national * 10 + regional * 5));
 
-// Admission likelihood
-let admissionStatus = "";
-let emoji = "";
-if (profileScore >= 85) {
+  // Weighted total score
+  const totalScore = (
+    (olympiadScore * weightOly / 100) +
+    (academics * weightAcad / 100) +
+    (projects * weightProj / 100)
+  );
+
+  // Profile rating out of 100
+  const profileRating = Math.round(totalScore);
+
+  // Admission estimate
+  let admissionStatus, emoji;
+  if (profileRating >= 90 && acceptanceRate > 10) {
     admissionStatus = "Highly Likely";
-    emoji = "🚀"; // Rocket
-} else if (profileScore >= 70) {
+    emoji = "✅";
+  } else if (profileRating >= 75) {
     admissionStatus = "Likely";
-    emoji = "👍"; // Thumbs Up
-} else if (profileScore >= 50) {
+    emoji = "🟡";
+  } else if (profileRating >= 60) {
     admissionStatus = "Borderline";
-    emoji = "🕵️"; // Detective
-} else {
+    emoji = "⚠️";
+  } else {
     admissionStatus = "Unlikely";
-    emoji = "❌"; // Cross
-}
+    emoji = "❌";
+  }
 
-// Scholarship Chance Calculation
-let scholarshipChance = 0;
-if (!nonEnglish) {
-    scholarshipChance += Math.min(40, (gpa / 4) * 40); // 40% weight
-    scholarshipChance += Math.min(30, (ielts / 9) * 30); // 30% weight
-}
-scholarshipChance += Math.min(30, (awards / 10) * 30); // 30% awards weight
-if (!nonEnglish && (satMath > 0 || satWriting > 0)) {
-    const satTotal = Math.min(1600, satMath + satWriting);
-    scholarshipChance += (satTotal / 1600) * 10; // bonus boost
-}
-scholarshipChance = scholarshipChance.toFixed(2);
+  // Scholarship estimation (based on holistic profile)
+  let scholarshipChance = 0;
+  if (profileRating >= 90) {
+    scholarshipChance += 40;
+  } else if (profileRating >= 75) {
+    scholarshipChance += 30;
+  } else if (profileRating >= 60) {
+    scholarshipChance += 20;
+  } else {
+    scholarshipChance += 5;
+  }
 
-let scholarshipStatus = "";
-let scholarshipEmoji = "";
-if (scholarshipChance >= 85) {
-    scholarshipStatus = "Very High";
-    scholarshipEmoji = "🎓"; // Graduation Cap
-} else if (scholarshipChance >= 60) {
-    scholarshipStatus = "Moderate";
-    scholarshipEmoji = "💸"; // Money with wings
-} else if (scholarshipChance >= 40) {
-    scholarshipStatus = "Borderline";
-    scholarshipEmoji = "❓"; // Question Mark
-} else {
-    scholarshipStatus = "Low";
-    scholarshipEmoji = "⚠️"; // Warning
+  if (gpa !== null) {
+    if (gpa >= 3.9) scholarshipChance += 20;
+    else if (gpa >= 3.7) scholarshipChance += 10;
+  }
+
+  if (ielts !== null) {
+    if (ielts >= 8) scholarshipChance += 15;
+    else if (ielts >= 7) scholarshipChance += 10;
+  }
+
+  if (awards >= 5) scholarshipChance += 10;
+  else if (awards >= 2) scholarshipChance += 5;
+
+  const satTotal = satMath + satWriting;
+  if (satTotal >= 1500) scholarshipChance += 15;
+  else if (satTotal >= 1350) scholarshipChance += 10;
+
+  // Cap at 95%
+  scholarshipChance = Math.min(95, scholarshipChance);
+
+  const results = document.getElementById("results");
+  results.innerHTML = `
+    <h3>Results for ${universityName}</h3>
+    <p><strong>Profile Rating:</strong> ${profileRating}/100</p>
+    <p><strong>Admission Likelihood:</strong> ${admissionStatus} ${emoji}</p>
+    <p><strong>Scholarship Estimate:</strong> ${scholarshipChance}% chance</p>
+    <hr>
+    <h4>Profile Breakdown:</h4>
+    <ul>
+      <li><strong>Olympiad Score:</strong> ${olympiadScore}/100</li>
+      <li><strong>Academic Score:</strong> ${academics}/100</li>
+      <li><strong>Project Score:</strong> ${projects}/100</li>
+      <li><strong>GPA:</strong> ${gpa ?? "Not Provided"}/4.0</li>
+      <li><strong>IELTS:</strong> ${ielts ?? "Not Provided"}/10</li>
+      <li><strong>SAT Math:</strong> ${satMath || "Not Provided"}/800</li>
+      <li><strong>SAT Writing:</strong> ${satWriting || "Not Provided"}/800</li>
+      <li><strong>Total Awards:</strong> ${awards}</li>
+      <li><strong>University Acceptance Rate:</strong> ${acceptanceRate}%/100%</li>
+    </ul>
+  `;
 }
-
-// Display result
-document.getElementById("results").innerHTML = `
-    <div>
-        <h3>Results for ${uniName}</h3>
-        <ul>
-            <li><strong>Olympiad Score:</strong> ${olympiadScore} / 10</li>
-            <li><strong>Academic Score:</strong> ${academics}</li>
-            <li><strong>Project Score:</strong> ${projects}</li>
-            <li><strong>Profile Score:</strong> ${profileScore} — <strong>${admissionStatus}</strong> ${emoji}</li>
-            <li><strong>Acceptance Rate:</strong> ${acceptanceRate}%</li>
-            ${!nonEnglish ? `<li><strong>GPA:</strong> ${gpa}</li><li><strong>IELTS:</strong> ${ielts}</li>` : ""}
-            ${satMath ? `<li><strong>SAT Math:</strong> ${satMath}</li>` : ""}
-            ${satWriting ? `<li><strong>SAT Writing:</strong> ${satWriting}</li>` : ""}
-            <li><strong>Awards:</strong> ${awards}</li>
-            <li><strong>Scholarship Chance:</strong> ${scholarshipChance}% — ${scholarshipStatus} ${scholarshipEmoji}</li>
-        </ul>
-    </div>
-`;
-
-}
-

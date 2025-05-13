@@ -1,17 +1,56 @@
-// calculator.js 
-function calculateAdmission() { const universityName = document.getElementById("universityName").value; const acceptanceRate = parseFloat(document.getElementById("acceptanceRate").value); const gpa = parseFloat(document.getElementById("gpa").value); const ielts = parseFloat(document.getElementById("ielts").value); const awards = parseInt(document.getElementById("awards").value); const projects = parseInt(document.getElementById("projects").value); const intl = parseInt(document.getElementById("international").value); const natl = parseInt(document.getElementById("national").value); const regional = parseInt(document.getElementById("regional").value);
+function calculateAdmission() {
+  const gpa = parseFloat(document.getElementById("gpa").value);
+  const ielts = parseFloat(document.getElementById("ielts").value);
+  const olympiadScore = parseFloat(document.getElementById("olympiadScore").value);
+  const academicScore = parseFloat(document.getElementById("academicScore").value);
+  const projectScore = parseFloat(document.getElementById("projectScore").value);
+  const olympiadWeight = parseFloat(document.getElementById("olympiadWeight").value);
+  const academicWeight = parseFloat(document.getElementById("academicWeight").value);
+  const projectWeight = parseFloat(document.getElementById("projectWeight").value);
+  const university = document.getElementById("universityName").value;
+  const competitiveness = parseFloat(document.getElementById("competitiveness").value);
 
-// Sanitize inputs const inputs = [gpa, ielts, awards, projects, intl, natl, regional]; if (inputs.some(isNaN)) { document.getElementById("results").innerHTML = "Please fill out all fields."; return; }
+  const totalWeight = olympiadWeight + academicWeight + projectWeight;
+  const resultDiv = document.getElementById("result");
 
-// Profile Rating (100 max) let profileRating = 0; profileRating += (gpa / 4.0) * 25; // max 25 profileRating += (ielts / 9.0) * 15; // max 15 profileRating += Math.min(awards, 30); // max 30 profileRating += (projects / 100) * 20; // max 20 profileRating += Math.min(intl * 3 + natl * 2 + regional, 10); // max 10 profileRating = Math.min(profileRating, 100);
+  if (isNaN(gpa) || isNaN(ielts) || isNaN(olympiadScore) || isNaN(academicScore) ||
+      isNaN(projectScore) || isNaN(olympiadWeight) || isNaN(academicWeight) ||
+      isNaN(projectWeight) || isNaN(competitiveness) || !university) {
+    resultDiv.innerHTML = "<div class='error'>Please fill in all fields correctly.</div>";
+    return;
+  }
 
-// Admission Estimate let admissionRate = acceptanceRate; if (profileRating >= 90) admissionRate += 15; else if (profileRating >= 75) admissionRate += 10; else if (profileRating >= 60) admissionRate += 5; else if (profileRating <= 40) admissionRate -= 10;
+  if (totalWeight !== 100) {
+    resultDiv.innerHTML = "<div class='error'>Total weight must equal 100.</div>";
+    return;
+  }
 
-admissionRate -= 10; // competitiveness adjustment admissionRate = Math.max(Math.min(admissionRate, 99), 0);
+  // Normalize IELTS to 100 scale
+  const ieltsNormalized = (ielts / 9) * 100;
 
-// Scholarship Estimate (Based only on GPA, IELTS, Awards, Projects) let scholarshipRate = 0; scholarshipRate += (gpa / 4.0) * 30; // max 30 scholarshipRate += (ielts / 9.0) * 15; // max 15 scholarshipRate += Math.min(awards, 30); // max 30 scholarshipRate += (projects / 100) * 25; // max 25 scholarshipRate = Math.min(scholarshipRate, 100); scholarshipRate -= 10; // realistic adjustment
+  // Weighted Score Calculation
+  const weightedScore = (
+    (olympiadScore * olympiadWeight) +
+    (academicScore * academicWeight) +
+    (projectScore * projectWeight)
+  ) / 100;
 
-// Rejection chance const rejectionChance = 100 - admissionRate;
+  // Admission Score is average of GPA, IELTS, and weighted score
+  let admissionScore = (gpa + ieltsNormalized + weightedScore) / 3;
 
-// Output document.getElementById("results").innerHTML = <strong>University:</strong> ${universityName}<br> <strong>Profile Rating:</strong> ${profileRating.toFixed(2)} / 100<br> <strong>Estimated Admission Chance:</strong> ${admissionRate.toFixed(2)}%<br> <strong>Estimated Scholarship Chance:</strong> ${scholarshipRate.toFixed(2)}%<br> <strong>Rejection Chance:</strong> ${rejectionChance.toFixed(2)}%<br>; }
+  // Apply penalty based on competitiveness
+  const competitivenessFactor = 1 - (competitiveness / 20); // 10 = -50%, 1 = -5%
+  const admissionChance = Math.max(0, Math.min(100, admissionScore * competitivenessFactor));
 
+  // Scholarship is harder – more weighted toward top scores
+  const scholarshipBase = (ieltsNormalized * 0.3 + gpa * 0.2 + weightedScore * 0.5);
+  const scholarshipPenalty = 1 - (competitiveness / 15); // 10 = -66%, 5 = -33%
+  const scholarshipChance = Math.max(0, Math.min(100, scholarshipBase * scholarshipPenalty));
+
+  resultDiv.innerHTML = `
+    <h3>Results for <strong>${university}</strong></h3>
+    <p><strong>🎓 Admission Chance:</strong> ${admissionChance.toFixed(2)}%</p>
+    <p><strong>💰 Scholarship Chance:</strong> ${scholarshipChance.toFixed(2)}%</p>
+    <p><em>Note: This is a simulated estimate based on academic and project strength. Actual results may vary.</em></p>
+  `;
+}

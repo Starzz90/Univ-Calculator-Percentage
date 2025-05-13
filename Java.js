@@ -71,9 +71,9 @@ function calculateProfileScore() {
             <li><strong>Olympiad Score:</strong> ${olympiadScore}</li>
             <li><strong>Academic Score:</strong> ${academics}</li>
             <li><strong>Project Score:</strong> ${projects}</li>
-            <li><strong>Total Weighted Score:</strong> ${totalScore}%</li>
-            <li><strong>GPA:</strong> ${gpa}</li>
-            <li><strong>IELTS:</strong> ${ielts}</li>
+            <li><strong>Total Weighted Score:</strong> ${totalScore}%/100%</li>
+            <li><strong>GPA:</strong> ${gpa}/4.0</li>
+            <li><strong>IELTS:</strong> ${ielts}/10</li>
             <li><strong>Profile Rating:</strong> ${profileRating}/100</li>
         </ul>
         <h4>${emoji} Verdict: ${verdict}</h4>

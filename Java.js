@@ -1,56 +1,72 @@
-function calculateAdmission() {
-  const gpa = parseFloat(document.getElementById("gpa").value);
-  const ielts = parseFloat(document.getElementById("ielts").value);
-  const olympiadScore = parseFloat(document.getElementById("olympiadScore").value);
-  const academicScore = parseFloat(document.getElementById("academicScore").value);
-  const projectScore = parseFloat(document.getElementById("projectScore").value);
-  const olympiadWeight = parseFloat(document.getElementById("olympiadWeight").value);
-  const academicWeight = parseFloat(document.getElementById("academicWeight").value);
-  const projectWeight = parseFloat(document.getElementById("projectWeight").value);
-  const university = document.getElementById("universityName").value;
-  const competitiveness = parseFloat(document.getElementById("competitiveness").value);
+function calculateProfileScore() {
+    // Create a container to show results
+    const output = document.createElement("pre");
+    document.body.appendChild(output);
 
-  const totalWeight = olympiadWeight + academicWeight + projectWeight;
-  const resultDiv = document.getElementById("result");
+    // Helper to get user input from the page
+    function getInput(promptText) {
+        return parseFloat(prompt(promptText));
+    }
 
-  if (isNaN(gpa) || isNaN(ielts) || isNaN(olympiadScore) || isNaN(academicScore) ||
-      isNaN(projectScore) || isNaN(olympiadWeight) || isNaN(academicWeight) ||
-      isNaN(projectWeight) || isNaN(competitiveness) || !university) {
-    resultDiv.innerHTML = "<div class='error'>Please fill in all fields correctly.</div>";
-    return;
-  }
+    // 1. Olympiad Achievements
+    let internationalAwards = parseFloat(prompt("Number of International Olympiad awards (out of 10):"));
+    let nationalAwards = parseFloat(prompt("Number of National Olympiad awards (out of 10):"));
+    let regionalAwards = parseFloat(prompt("Number of Regional Olympiad awards (out of 10):"));
 
-  if (totalWeight !== 100) {
-    resultDiv.innerHTML = "<div class='error'>Total weight must equal 100.</div>";
-    return;
-  }
+    let internationalScore = internationalAwards * 10;
+    let nationalScore = nationalAwards * 10;
+    let regionalScore = regionalAwards * 10;
 
-  // Normalize IELTS to 100 scale
-  const ieltsNormalized = (ielts / 9) * 100;
+    let olympiadScore = ((internationalScore + nationalScore + regionalScore) / 3).toFixed(2);
 
-  // Weighted Score Calculation
-  const weightedScore = (
-    (olympiadScore * olympiadWeight) +
-    (academicScore * academicWeight) +
-    (projectScore * projectWeight)
-  ) / 100;
+    // 2. Academics
+    let academicsScore = parseFloat(prompt("Academics score (e.g., GPA, SAT scores, etc.) (0 to 100):"));
 
-  // Admission Score is average of GPA, IELTS, and weighted score
-  let admissionScore = (gpa + ieltsNormalized + weightedScore) / 3;
+    // 3. Projects
+    let projectsScore = parseFloat(prompt("Projects score (Real-world coding, research, etc.) (0 to 100):"));
 
-  // Apply penalty based on competitiveness
-  const competitivenessFactor = 1 - (competitiveness / 20); // 10 = -50%, 1 = -5%
-  const admissionChance = Math.max(0, Math.min(100, admissionScore * competitivenessFactor));
+    // Weights
+    let weightOlympiads = parseFloat(prompt("Weight for Olympiad achievements (0 to 100):"));
+    let weightAcademics = parseFloat(prompt("Weight for Academics (0 to 100):"));
+    let weightProjects = parseFloat(prompt("Weight for Projects (0 to 100):"));
 
-  // Scholarship is harder – more weighted toward top scores
-  const scholarshipBase = (ieltsNormalized * 0.3 + gpa * 0.2 + weightedScore * 0.5);
-  const scholarshipPenalty = 1 - (competitiveness / 15); // 10 = -66%, 5 = -33%
-  const scholarshipChance = Math.max(0, Math.min(100, scholarshipBase * scholarshipPenalty));
+    if (weightOlympiads + weightAcademics + weightProjects !== 100) {
+        output.textContent = "⚠️ Error: The weights do not sum to 100. Please refresh and try again.";
+        return;
+    }
 
-  resultDiv.innerHTML = `
-    <h3>Results for <strong>${university}</strong></h3>
-    <p><strong>🎓 Admission Chance:</strong> ${admissionChance.toFixed(2)}%</p>
-    <p><strong>💰 Scholarship Chance:</strong> ${scholarshipChance.toFixed(2)}%</p>
-    <p><em>Note: This is a simulated estimate based on academic and project strength. Actual results may vary.</em></p>
-  `;
+    let totalScore = (
+        olympiadScore * (weightOlympiads / 100) +
+        academicsScore * (weightAcademics / 100) +
+        projectsScore * (weightProjects / 100)
+    ).toFixed(2);
+
+    // 4. University Acceptance Rate
+    let universityName = prompt("Enter the name of your university (e.g., NUS, Stanford, etc.):");
+    let acceptanceRate = parseFloat(prompt(`Enter the acceptance rate for ${universityName} (0 to 100):`));
+    let actualRate = 100 - acceptanceRate;
+
+    // Build result message
+    let message = `📊 RESULTS:
+- Olympiad Score: ${olympiadScore}
+- Academics Score: ${academicsScore}
+- Projects Score: ${projectsScore}
+- Total Weighted Score: ${totalScore}%
+- Normalized Total Score: ${totalScore}%
+
+🎓 University Admission Insight:
+`;
+
+    if (totalScore >= actualRate) {
+        message += `✅ Congratulations! You are likely to be accepted into ${universityName}.`;
+    } else if (totalScore >= (actualRate - 30)) {
+        message += `🤔 You are on the borderline for ${universityName}. You may have a chance!`;
+    } else {
+        message += `❌ Your profile score is currently too low for ${universityName}. Consider improving key areas.`;
+    }
+
+    output.textContent = message;
 }
+
+// Run the calculator
+calculateProfileScore();

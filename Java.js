@@ -1,57 +1,60 @@
-document.getElementById("scoreForm").addEventListener("submit", function (e) {
-  e.preventDefault();
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("calculatorForm").addEventListener("submit", function (e) {
+    e.preventDefault();
 
-  const get = id => parseFloat(document.getElementById(id).value) || 0;
+    const intl = +document.getElementById("internationalAwards").value;
+    const natl = +document.getElementById("nationalAwards").value;
+    const reg = +document.getElementById("regionalAwards").value;
+    const ielts = +document.getElementById("ieltsScore").value;
+    const acad = +document.getElementById("academicsScore").value;
+    const proj = +document.getElementById("projectsScore").value;
+    const wOly = +document.getElementById("weightOlympiads").value;
+    const wAcad = +document.getElementById("weightAcademics").value;
+    const wProj = +document.getElementById("weightProjects").value;
+    const ieltsReq = +document.getElementById("ieltsRequirement").value;
+    const uni = document.getElementById("universityName").value;
+    const acceptRate = +document.getElementById("acceptanceRate").value;
 
-  const internationalAwards = get("international");
-  const nationalAwards = get("national");
-  const regionalAwards = get("regional");
+    const results = document.getElementById("results");
 
-  const academicsScore = get("academics");
-  const projectsScore = get("projects");
+    if (wOly + wAcad + wProj !== 100) {
+      results.innerHTML = `<p style="color: red;">⚠️ Error: The weights must sum to 100.</p>`;
+      return;
+    }
 
-  const weightOlympiads = get("wOlympiad");
-  const weightAcademics = get("wAcademics");
-  const weightProjects = get("wProjects");
+    const olympiadScore = ((intl * 10) + (natl * 10) + (reg * 10)) / 3;
+    const totalScore = (
+      olympiadScore * (wOly / 100) +
+      acad * (wAcad / 100) +
+      proj * (wProj / 100)
+    ).toFixed(2);
 
-  const universityName = document.getElementById("universityName").value.trim();
-  const acceptanceRate = get("acceptanceRate");
+    const requiredScore = (100 - acceptRate).toFixed(2);
+    let message = "";
 
-  const output = document.getElementById("output");
+    if (ielts < ieltsReq) {
+      message += `<p>❌ Your IELTS score of ${ielts} is below the requirement of ${ieltsReq} for ${uni}.</p>`;
+      message += `<p>Please consider improving your English proficiency.</p>`;
+    } else {
+      message += `<p>✅ Your IELTS score of ${ielts} meets the requirement of ${ieltsReq} for ${uni}.</p>`;
+      message += `<h3>📊 Results</h3>`;
+      message += `<p>IELTS: ${ielts}</p>`;
+      message += `<p>Olympiad Score: ${olympiadScore.toFixed(2)}</p>`;
+      message += `<p>Academics Score: ${acad}</p>`;
+      message += `<p>Projects Score: ${proj}</p>`;
+      message += `<p>Total Weighted Score: ${totalScore}%</p>`;
+      message += `<p>Estimated Required Score: ${requiredScore}%</p>`;
+      message += `<p>University Acceptance Rate: ${acceptRate}%</p>`;
 
-  if (weightOlympiads + weightAcademics + weightProjects !== 100) {
-    output.textContent = "⚠️ Error: The weights must add up to 100.";
-    return;
-  }
+      if (totalScore >= requiredScore) {
+        message += `<p style="color: green;">✅ Congratulations! You are likely to be accepted into ${uni}.</p>`;
+      } else if (totalScore >= requiredScore - 20) {
+        message += `<p style="color: orange;">🤔 Borderline! You might have a chance at ${uni}.</p>`;
+      } else {
+        message += `<p style="color: red;">❌ You may need to improve your profile for better chances at ${uni}.</p>`;
+      }
+    }
 
-  const olympiadScore = (
-    (internationalAwards * 10 + nationalAwards * 10 + regionalAwards * 10) / 3
-  ).toFixed(2);
-
-  const totalScore = (
-    olympiadScore * (weightOlympiads / 100) +
-    academicsScore * (weightAcademics / 100) +
-    projectsScore * (weightProjects / 100)
-  ).toFixed(2);
-
-  const threshold = 100 - acceptanceRate;
-  let insight = "";
-
-  if (totalScore >= threshold) {
-    insight = `✅ Likely accepted into ${universityName}.`;
-  } else if (totalScore >= threshold - 30) {
-    insight = `🤔 Borderline chance for ${universityName}.`;
-  } else {
-    insight = `❌ Unlikely to be accepted into ${universityName}. Improve your profile.`;
-  }
-
-  output.textContent = `📊 RESULTS:
-- Olympiad Score: ${olympiadScore}
-- Academics Score: ${academicsScore}
-- Projects Score: ${projectsScore}
-- Total Weighted Score: ${totalScore}%
-- Normalized Total Score: ${totalScore}%
-
-🎓 University Admission Insight:
-${insight}`;
+    results.innerHTML = message;
+  });
 });
